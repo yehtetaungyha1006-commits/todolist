@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import TodoItem from './todoitem.vue'
 
 const newTodo = ref('')
 const editId = ref(null)
@@ -24,6 +25,10 @@ const addTodo = () => {
 
 const deleteTodo = (id) => {
   todos.value = todos.value.filter(todo => todo.id !== id)
+}
+
+const toggleTodo = ({ todo, done }) => {
+  todo.done = done
 }
 
 const cancelEdit = () => {
@@ -52,6 +57,8 @@ const completedCount = computed(() =>
 const incompleteCount = computed(() =>
   todos.value.filter(todo => todo.done === false).length
 )
+
+const filteredTodos = computed(() => todos.value)
 
 </script>
 
@@ -84,36 +91,24 @@ const incompleteCount = computed(() =>
       </span>
     </div>
 
-    <ul>
+    <ul v-if="filteredTodos.length > 0" class="todo-list">
       <li
-        v-for="(todo, index) in todos"
+        v-for="(todo, index) in filteredTodos"
         :key="todo.id"
+        :class="['todo-item', { completed: todo.done }]"
       >
-
-        <div v-if="editId === todo.id">
-          <input v-model="editText" />
-
-          <button @click="updateTodo(todo)">
-            Save
-          </button>
-
-        <button @click="cancelEdit">
-            Cancel
-        </button>
-        </div>
-
-        <div v-else>
-          {{ index + 1 }}. {{ todo.text }}
-
-          <button @click="startEdit(todo)">
-            Update
-          </button>
-
-          <button @click="deleteTodo(todo.id)">
-            Delete
-          </button>
-        </div>
-
+        <TodoItem
+          :todo="todo"
+          :index="index"
+          :is-editing="editId === todo.id"
+          :edit-text="editText"
+          @start-edit="startEdit"
+          @update-todo="updateTodo"
+          @cancel-edit="cancelEdit"
+          @delete-todo="deleteTodo"
+          @toggle-done="toggleTodo"
+          @update:edit-text="editText = $event"
+        />
       </li>
     </ul>
 
@@ -208,12 +203,17 @@ ul {
   margin: 0;
 }
 
-li {
+.todo-item {
   margin-bottom: 12px;
   padding: 15px 16px;
   background: #f9fafb;
   border: 1px solid #eceff3;
   border-radius: 10px;
+}
+
+.todo-item.completed {
+  background: #eefaf4;
+  border-color: #c8ead8;
 }
 
 li > div {
