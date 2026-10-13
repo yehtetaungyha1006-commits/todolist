@@ -196,28 +196,7 @@ onMounted(fetchTodos)
 
 <template>
   <div class="todo-card">
-    <div class="card-header">
-      <div class="header-left">
-        <h2>Todo List</h2>
-        <span class="total-badge">{{ todos.length }} รายการ</span>
-      </div>
-
-      <div class="backend-status" :class="{ online: backendOnline, offline: !backendOnline }">
-        <span class="status-dot"></span>
-        <span class="status-text">
-          {{ backendOnline ? 'Backend ออนไลน์' : 'Backend ออฟไลน์' }}
-        </span>
-        <button
-          v-if="!backendOnline"
-          type="button"
-          class="reconnect-btn"
-          title="ลองเชื่อมต่อใหม่"
-          @click="fetchTodos"
-        >
-          เชื่อมต่อใหม่
-        </button>
-      </div>
-    </div>
+    <h2>Todo List</h2>
 
     <!-- แถบแจ้งเตือน Error -->
     <div v-if="error" class="error-banner" role="alert">
