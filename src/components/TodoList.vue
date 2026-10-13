@@ -2,8 +2,14 @@
 import { ref, computed, onMounted } from 'vue'
 import TodoItem from './Todoitem.vue'
 
-// Base URL ของ Backend (อ่านจาก .env หรือใช้ค่าเริ่มต้น http://localhost:3000)
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/+$/, '')
+// Base URL ของ Backend:
+// - ถ้ามี VITE_API_URL ให้ใช้ค่านั้น
+// - บน Local dev (DEV mode) ให้ใช้ http://localhost:3000
+// - บน Production / Vercel ให้ใช้ relative path '' เพื่อเรียก Backend บน Vercel โดยตรง (ไม่ต้องเปิดพอร์ต 3000)
+const API_URL = (
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.DEV ? 'http://localhost:3000' : '')
+).replace(/\/+$/, '')
 
 const newTodo = ref('')
 const editId = ref(null)
@@ -17,7 +23,8 @@ const backendOnline = ref(false)
 
 // ฟังก์ชันกลางสำหรับเรียก Backend API
 const request = async (path, options = {}) => {
-  const url = `${API_URL}${path.startsWith('/') ? path : '/' + path}`
+  const cleanPath = path.startsWith('/') ? path : '/' + path
+  const url = API_URL ? `${API_URL}${cleanPath}` : cleanPath
   
   let response
   try {
@@ -30,7 +37,7 @@ const request = async (path, options = {}) => {
     })
   } catch (netErr) {
     backendOnline.value = false
-    throw new Error('ไม่สามารถเชื่อมต่อกับ Backend ได้ (กรุณารัน `npm run server` หรือเปิดพอร์ต 3000)')
+    throw new Error('ไม่สามารถเชื่อมต่อกับ Backend ได้ กรุณาลองใหม่อีกครั้ง')
   }
 
   if (!response.ok) {
