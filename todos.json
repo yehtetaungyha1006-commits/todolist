@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "text": "เรียนรู้ Vue 3 Composition API",
+    "done": true
+  },
+  {
+    "id": 2,
+    "text": "สร้าง Todo List App",
+    "done": true
+  },
+  {
+    "id": 3,
+    "text": "เชื่อมต่อกับ Backend Express API",
+    "done": false
+  },
+  {
+    "id": 4,
+    "text": "Test Todo",
+    "done": true
+  }
+]
